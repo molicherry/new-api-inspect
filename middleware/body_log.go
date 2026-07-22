@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/model"
 	"github.com/gin-gonic/gin"
 )
 
@@ -79,19 +80,31 @@ func HeaderCapture() gin.HandlerFunc {
 		c.Next()
 
 		// --- Response headers ---
-		if common.StoreResponseHeadersEnabled {
-			hdrs := make(map[string]string)
-			for k, v := range c.Writer.Header() {
-				if len(v) > 0 {
-					hdrs[k] = v[0]
+		// Set on context for forward compatibility but also write directly
+		// to the log entry since RecordConsumeLog runs before c.Next returns.
+		requestId := c.GetString(common.RequestIdKey)
+		if requestId != "" {
+			var kvs = make(map[string]interface{})
+			if common.StoreResponseHeadersEnabled {
+				hdrs := make(map[string]string)
+				for k, v := range c.Writer.Header() {
+					if len(v) > 0 {
+						hdrs[k] = v[0]
+					}
+				}
+				if len(hdrs) > 0 {
+					c.Set(common.ContextKeyResponseHdrs, hdrs)
+					kvs["response_headers"] = hdrs
 				}
 			}
-			c.Set(common.ContextKeyResponseHdrs, hdrs)
-		}
-
-		// --- Response body ---
-		if wrapper != nil && wrapper.buf.Len() > 0 {
-			c.Set(common.ContextKeyResponseBody, wrapper.buf.String())
+			if wrapper != nil && wrapper.buf.Len() > 0 {
+				body := wrapper.buf.String()
+				c.Set(common.ContextKeyResponseBody, body)
+				kvs["response_body"] = common.StoreBodyOrInline(requestId, "response_body", body)
+			}
+			if len(kvs) > 0 {
+				model.AppendLogOtherByRequestId(requestId, kvs)
+			}
 		}
 	}
 }

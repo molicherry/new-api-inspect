@@ -361,9 +361,9 @@ func RecordConsumeLog(c *gin.Context, userId int, params RecordConsumeLogParams)
 	}
 	b := bodyCapture{ctx: c, requestId: requestId, other: params.Other}
 	b.storeIfEnabled(common.StoreRequestBodyEnabled, common.ContextKeyRequestBody, "request_body")
-	b.storeIfEnabled(common.StoreResponseBodyEnabled, common.ContextKeyResponseBody, "response_body")
+	// Response body/headers are captured in middleware.HeaderCapture after
+	// c.Next() returns and written directly to the log via AppendLogOtherByRequestId.
 	b.storeIfEnabled(common.StoreRequestHeadersEnabled, common.ContextKeyRequestHdrs, "request_headers")
-	b.storeIfEnabled(common.StoreResponseHeadersEnabled, common.ContextKeyResponseHdrs, "response_headers")
 	b.storeIfEnabled(common.StoreProviderRequestBodyEnabled, common.ContextKeyProviderRequestBody, "provider_request_body")
 	b.storeIfEnabled(common.StoreProviderResponseBodyEnabled, common.ContextKeyProviderResponseBody, "provider_response_body")
 
@@ -782,4 +782,26 @@ func DeleteOldLogBatch(ctx context.Context, targetTimestamp int64, limit int) (i
 		return 0, result.Error
 	}
 	return result.RowsAffected, nil
+}
+
+// AppendLogOtherByRequestId appends key-value pairs to a log record's Other
+// JSON field, identified by request ID. This is called from middleware after
+// the handler has returned, to capture response-side data that is not
+// available when RecordConsumeLog runs.
+func AppendLogOtherByRequestId(requestId string, kvs map[string]interface{}) {
+	if requestId == "" || len(kvs) == 0 {
+		return
+	}
+	var log Log
+	if err := LOG_DB.Where("request_id = ?", requestId).First(&log).Error; err != nil {
+		return
+	}
+	other := make(map[string]interface{})
+	if log.Other != "" {
+		_ = common.UnmarshalJsonStr(log.Other, &other)
+	}
+	for k, v := range kvs {
+		other[k] = v
+	}
+	LOG_DB.Model(&log).Update("other", common.MapToJsonStr(other))
 }
