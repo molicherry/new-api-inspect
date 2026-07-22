@@ -1255,6 +1255,12 @@ export function DetailsDialog(props: DetailsDialogProps) {
             {other.response_body && (
               <InspectBodyBlock body={other.response_body} labelKey='inspect.response_body' t={t} copyToClipboard={copyToClipboard} isCopied={copiedText === other.response_body} />
             )}
+            {other.provider_request_headers && (
+              <InspectHeaderBlock
+                headers={other.provider_request_headers}
+                label={t('Provider Request Headers')}
+              />
+            )}
             {other.provider_request_body && (
               <InspectBodyBlock body={other.provider_request_body} labelKey='inspect.provider_request_body' t={t} copyToClipboard={copyToClipboard} isCopied={copiedText === other.provider_request_body} />
             )}
@@ -1309,7 +1315,8 @@ function hasInspectData(other: LogOtherData | null): boolean {
   return !!(
     other.request_headers || other.request_body ||
     other.response_headers || other.response_body ||
-    other.provider_request_body || other.provider_response_body
+    other.provider_request_body || other.provider_response_body ||
+    other.provider_request_headers
   )
 }
 

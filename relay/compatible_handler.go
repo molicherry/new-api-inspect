@@ -202,6 +202,18 @@ func TextHelper(c *gin.Context, info *relaycommon.RelayInfo) (newAPIError *types
 	if resp != nil {
 		httpResp = resp.(*http.Response)
 		info.IsStream = info.IsStream || strings.HasPrefix(httpResp.Header.Get("Content-Type"), "text/event-stream")
+
+		// Capture provider-format request headers (sent to upstream).
+		if common.StoreProviderRequestHeadersEnabled && httpResp.Request != nil && httpResp.Request.Header != nil {
+			hdrs := make(map[string]string, len(httpResp.Request.Header))
+			for k, v := range httpResp.Request.Header {
+				if len(v) > 0 {
+					hdrs[k] = v[0]
+				}
+			}
+			c.Set(common.ContextKeyProviderRequestHdrs, hdrs)
+		}
+
 		// Capture provider-format response body.
 		// Non-streaming: read full body, store, reset for DoResponse.
 		// Streaming: wrap body with TeeReader to buffer as data flows through.

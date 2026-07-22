@@ -106,6 +106,7 @@ const OPERATIONS_SECTIONS = [
           StoreResponseHeadersEnabled: Boolean(settings.StoreResponseHeadersEnabled),
           StoreProviderRequestBodyEnabled: Boolean(settings.StoreProviderRequestBodyEnabled),
           StoreProviderResponseBodyEnabled: Boolean(settings.StoreProviderResponseBodyEnabled),
+          StoreProviderRequestHeadersEnabled: Boolean(settings.StoreProviderRequestHeadersEnabled),
         }}
       />
     ),

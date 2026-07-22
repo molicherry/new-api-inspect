@@ -366,6 +366,7 @@ func RecordConsumeLog(c *gin.Context, userId int, params RecordConsumeLogParams)
 	b.storeIfEnabled(common.StoreRequestHeadersEnabled, common.ContextKeyRequestHdrs, "request_headers")
 	b.storeIfEnabled(common.StoreProviderRequestBodyEnabled, common.ContextKeyProviderRequestBody, "provider_request_body")
 	b.storeIfEnabled(common.StoreProviderResponseBodyEnabled, common.ContextKeyProviderResponseBody, "provider_response_body")
+	b.storeIfEnabled(common.StoreProviderRequestHeadersEnabled, common.ContextKeyProviderRequestHdrs, "provider_request_headers")
 
 	otherStr := common.MapToJsonStr(params.Other)
 	// 判断是否需要记录 IP

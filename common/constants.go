@@ -120,6 +120,11 @@ var StoreProviderRequestBodyEnabled = false
 // "provider_response_body" in Other JSON. Defaults to false.
 var StoreProviderResponseBodyEnabled = false
 
+// StoreProviderRequestHeadersEnabled captures the HTTP request headers sent to the
+// upstream provider (after conversion, header override, auth injection). Stored as
+// "provider_request_headers" in the consume log's Other JSON. Defaults to false.
+var StoreProviderRequestHeadersEnabled = false
+
 var TLSInsecureSkipVerify bool
 var InsecureTLSConfig = &tls.Config{InsecureSkipVerify: true}
 
@@ -217,6 +222,7 @@ const (
 	ContextKeyResponseHdrs        = "captured_response_headers"
 	ContextKeyProviderRequestBody  = "captured_provider_request_body"
 	ContextKeyProviderResponseBody = "captured_provider_response_body"
+	ContextKeyProviderRequestHdrs  = "captured_provider_request_headers"
 )
 
 const (

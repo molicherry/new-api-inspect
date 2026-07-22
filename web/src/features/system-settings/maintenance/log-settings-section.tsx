@@ -86,6 +86,7 @@ const logSettingsSchema = z.object({
   StoreResponseHeadersEnabled: z.boolean(),
   StoreProviderRequestBodyEnabled: z.boolean(),
   StoreProviderResponseBodyEnabled: z.boolean(),
+  StoreProviderRequestHeadersEnabled: z.boolean(),
   LogRetentionDays: z.number().int().min(0, 'Must be 0 or greater'),
 })
 
@@ -98,6 +99,7 @@ export type BodyCaptureSettings = {
   StoreResponseHeadersEnabled: boolean
   StoreProviderRequestBodyEnabled: boolean
   StoreProviderResponseBodyEnabled: boolean
+  StoreProviderRequestHeadersEnabled: boolean
 }
 
 const bodyCaptureKeys: (keyof BodyCaptureSettings)[] = [
@@ -107,6 +109,7 @@ const bodyCaptureKeys: (keyof BodyCaptureSettings)[] = [
   'StoreResponseHeadersEnabled',
   'StoreProviderRequestBodyEnabled',
   'StoreProviderResponseBodyEnabled',
+  'StoreProviderRequestHeadersEnabled',
 ]
 
 type LogSettingsSectionProps = {
@@ -425,6 +428,7 @@ export function LogSettingsSection({
             { name: 'StoreResponseBodyEnabled' as const, label: 'Response Body', desc: 'Capture raw response body before format conversion. Non-streaming only.' },
             { name: 'StoreProviderRequestBodyEnabled' as const, label: 'Provider Request Body', desc: 'Capture request body AFTER format conversion (actual JSON sent to upstream).' },
             { name: 'StoreProviderResponseBodyEnabled' as const, label: 'Provider Response Body', desc: 'Capture raw response body FROM upstream before conversion. Non-streaming only.' },
+            { name: 'StoreProviderRequestHeadersEnabled' as const, label: 'Provider Request Headers', desc: 'Capture HTTP headers sent to upstream provider.' },
           ].map(({ name, label, desc }) => (
             <FormField
               key={name}

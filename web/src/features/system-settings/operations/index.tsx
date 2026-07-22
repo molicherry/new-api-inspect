@@ -50,6 +50,7 @@ const defaultOperationsSettings: OperationsSettings = {
   StoreResponseHeadersEnabled: false,
   StoreProviderRequestBodyEnabled: false,
   StoreProviderResponseBodyEnabled: false,
+  StoreProviderRequestHeadersEnabled: false,
   LogRetentionDays: 0,
   'performance_setting.disk_cache_enabled': false,
   'performance_setting.disk_cache_threshold_mb': 10,

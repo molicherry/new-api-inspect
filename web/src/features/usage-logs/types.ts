@@ -240,6 +240,7 @@ export interface LogOtherData {
   response_body?: string
   provider_request_body?: string
   provider_response_body?: string
+  provider_request_headers?: Record<string, string>
 }
 
 /**

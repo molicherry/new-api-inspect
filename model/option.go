@@ -54,6 +54,7 @@ func InitOptionMap() {
 	common.OptionMap["StoreResponseHeadersEnabled"] = strconv.FormatBool(common.StoreResponseHeadersEnabled)
 	common.OptionMap["StoreProviderRequestBodyEnabled"] = strconv.FormatBool(common.StoreProviderRequestBodyEnabled)
 	common.OptionMap["StoreProviderResponseBodyEnabled"] = strconv.FormatBool(common.StoreProviderResponseBodyEnabled)
+	common.OptionMap["StoreProviderRequestHeadersEnabled"] = strconv.FormatBool(common.StoreProviderRequestHeadersEnabled)
 	common.OptionMap["BodyFileRetentionDays"] = strconv.Itoa(common.BodyFileRetentionDays)
 	common.OptionMap["LogRetentionDays"] = strconv.Itoa(common.LogRetentionDays)
 	common.OptionMap["DisplayInCurrencyEnabled"] = strconv.FormatBool(common.DisplayInCurrencyEnabled)
@@ -334,6 +335,8 @@ func updateOptionMap(key string, value string) (err error) {
 			common.StoreProviderRequestBodyEnabled = boolValue
 		case "StoreProviderResponseBodyEnabled":
 			common.StoreProviderResponseBodyEnabled = boolValue
+		case "StoreProviderRequestHeadersEnabled":
+			common.StoreProviderRequestHeadersEnabled = boolValue
 		case "BodyFileRetentionDays":
 			days, err := strconv.Atoi(value)
 			if err == nil && days >= 0 {
