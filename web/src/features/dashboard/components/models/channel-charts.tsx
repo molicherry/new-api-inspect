@@ -55,8 +55,8 @@ interface ChannelChartsProps {
   filters: DashboardFilters
 }
 
-function channelLabel(id: number): string {
-  return `Channel #${id}`
+function channelLabel(t: (key: string, opts?: Record<string, unknown>) => string, id: number): string {
+  return t('Channel #{{id}}', { id })
 }
 
 export function ChannelCharts(props: ChannelChartsProps) {
@@ -213,7 +213,7 @@ export function ChannelCharts(props: ChannelChartsProps) {
         const stats = timeChannelMap.get(time)?.get(channelId)
         channelValues.push({
           Time: time,
-          Channel: channelLabel(channelId),
+          Channel: channelLabel(t, channelId),
           Count: stats?.count ?? 0,
           Tokens: stats?.tokens ?? 0,
           Quota: stats?.quota ?? 0,

@@ -61,12 +61,16 @@ import { Switch } from '@/components/ui/switch'
 import { api } from '@/lib/api'
 import dayjs from '@/lib/dayjs'
 import { formatTimestampToDate } from '@/lib/format'
+import { useQueryClient } from '@tanstack/react-query'
+import i18next from 'i18next'
+import { toast } from 'sonner'
 
 import {
   getCurrentLogCleanupTask,
   getSystemTask,
   startLogCleanupTask,
 } from '../api'
+import { updateSystemOption } from '../api'
 import {
   SettingsControlGroup,
   SettingsForm,
@@ -175,6 +179,7 @@ export function LogSettingsSection({
   bodyCaptureSettings,
 }: LogSettingsSectionProps) {
   const { t } = useTranslation()
+  const queryClient = useQueryClient()
   const updateOption = useUpdateOption()
   const form = useForm<LogSettingsFormValues>({
     resolver: zodResolver(logSettingsSchema),
@@ -304,8 +309,19 @@ export function LogSettingsSection({
       }
     }
     if (updates.length === 0) return
-    for (const u of updates) {
-      await updateOption.mutateAsync({ key: u.key, value: String(u.value) })
+
+    // Batch all updates via individual API calls, then invalidate once.
+    const results = await Promise.allSettled(
+      updates.map((u) =>
+        updateSystemOption({ key: u.key, value: String(u.value) })
+      )
+    )
+    const allOk = results.every((r) => r.status === 'fulfilled' && r.value.success)
+    queryClient.invalidateQueries({ queryKey: ['system-options'] })
+    if (allOk) {
+      toast.success(i18next.t('Setting updated successfully'))
+    } else {
+      toast.error(i18next.t('Failed to update setting'))
     }
   }
 
