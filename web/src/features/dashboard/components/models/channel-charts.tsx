@@ -222,7 +222,7 @@ export function ChannelCharts(props: ChannelChartsProps) {
     })
     channelValues.sort((a, b) => a.Time.localeCompare(b.Time))
 
-    const colorDomain = channelIds.map((id) => channelLabel(id))
+    const colorDomain = channelIds.map((id) => channelLabel(t, id))
     const colorRange = getDashboardChartColors(colorDomain.length)
 
     const tooltipContent = [
